@@ -1,4 +1,4 @@
-package one
+package main
 
 import (
 	"bufio"
@@ -20,14 +20,16 @@ func main() {
 }
 
 func SubPosition(x int, y int, inputs []command) (int, int) {
+	aim := 0
 	for _, cmd := range inputs {
 		switch cmd.Action {
 		case "forward":
 			x = x + cmd.Value
+			y = y + (cmd.Value * aim)
 		case "down":
-			y = y + cmd.Value
+			aim = aim + cmd.Value
 		case "up":
-			y = y - cmd.Value
+			aim = aim - cmd.Value
 		default:
 			fmt.Println("No information available for that command?")
 		}
