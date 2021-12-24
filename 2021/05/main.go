@@ -74,6 +74,43 @@ func BuildDiagram(inputs []line) diagram {
 				y := i
 				d[y][x]++
 			}
+		//Diag
+		case value.start[0] < value.end[0] && value.start[1] < value.end[1]:
+			dx := 1
+			dy := 1
+			diff := value.end[0] - value.start[0]
+			x := value.start[0]
+			y := value.start[1]
+			for i := 0; i <= diff; i++ {
+				d[y+(dy*i)][x+(dx*i)]++
+			}
+		case value.start[0] < value.end[0] && value.start[1] > value.end[1]:
+			dx := 1
+			dy := -1
+			diff := value.end[0] - value.start[0]
+			x := value.start[0]
+			y := value.start[1]
+			for i := 0; i <= diff; i++ {
+				d[y+(dy*i)][x+(dx*i)]++
+			}
+		case value.start[0] > value.end[0] && value.start[1] > value.end[1]:
+			dx := -1
+			dy := -1
+			diff := value.start[0] - value.end[0]
+			x := value.start[0]
+			y := value.start[1]
+			for i := 0; i <= diff; i++ {
+				d[y+(dy*i)][x+(dx*i)]++
+			}
+		case value.start[0] > value.end[0] && value.start[1] < value.end[1]:
+			dx := -1
+			dy := 1
+			diff := value.start[0] - value.end[0]
+			x := value.start[0]
+			y := value.start[1]
+			for i := 0; i <= diff; i++ {
+				d[y+(dy*i)][x+(dx*i)]++
+			}
 		}
 	}
 	return d
