@@ -30,7 +30,14 @@ func Play(boards []board, inputs []int) int {
 			win := boards[i].IsWinning()
 			if win {
 				count := boards[i].Count()
-				return count * value
+				remainings := append(boards[:i], boards[i+1:]...)
+				fmt.Println("remainings boards to check", len(remainings))
+
+				if len(boards) == 1 {
+					return count * value
+				} else {
+					return Play(remainings, inputs)
+				}
 			}
 		}
 	}
@@ -58,18 +65,20 @@ func (b board) IsWinning() bool {
 			}
 		}
 		if count == 5 {
+			fmt.Println("Win 1")
 			return true
 		}
 	}
 
-	for x := 0; x < 5; x++ {
+	for y := 0; y < 5; y++ {
 		count := 0
-		for y := 0; y < 5; y++ {
-			if b.numbers[y][x].drawn {
+		for x := 0; x < 5; x++ {
+			if b.numbers[x][y].drawn {
 				count = count + 1
 			}
 		}
 		if count == 5 {
+			fmt.Println("Win 2")
 			return true
 		}
 	}
@@ -81,7 +90,6 @@ func (b board) PlayBoard(num int) board {
 	for x := 0; x < 5; x++ {
 		for y := 0; y < 5; y++ {
 			b.numbers[x][y] = b.numbers[x][y].Draw(num)
-			fmt.Println(x, y, b.numbers[x][y].number, b.numbers[x][y].drawn)
 		}
 	}
 	return b
@@ -128,7 +136,6 @@ func ReadInput(path string) ([]int, []board) {
 		for col, val := range lines {
 			sanitized := strings.ReplaceAll(strings.Trim(val, " "), "  ", " ")
 			nums := strings.Split(sanitized, " ")
-			fmt.Println("nums", nums)
 			for row, nval := range nums {
 				number, _ := strconv.Atoi(nval)
 				blines[col][row] = boardNum{
