@@ -14,18 +14,22 @@ func main() {
 
 	input := ReadInput("input.txt")
 
-	r := regexp.MustCompile(`mul\([0-9]*,[0-9]*\)`)
-
+	r := regexp.MustCompile(`do\(\)|don't\(\)|mul\([0-9]*,[0-9]*\)`)
 	matches := r.FindAllString(input, -1)
 
-	fmt.Println(matches)
-
 	total := 0
+	counting := true
 	for i := 0; i < len(matches); i++ {
 		mul := matches[i]
-		x, y := ExtractIntegers(mul)
-		fmt.Println(mul, x, y)
-		total += x * y
+		if mul == "do()" {
+			counting = true
+		} else if mul == "don't()" {
+			counting = false
+		} else if counting {
+			x, y := ExtractIntegers(mul)
+			fmt.Println(mul, x, y)
+			total += x * y
+		}
 	}
 
 	fmt.Println(total)
