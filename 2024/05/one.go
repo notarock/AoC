@@ -4,83 +4,58 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"slices"
+	"strconv"
 	"strings"
 )
 
+type Rule struct {
+	Before int
+	After  int
+}
+
 func main() {
-	input := ReadInput("input.txt")
+	pages, rules := ReadInput("input.txt")
 
-	totals := 0
+	fmt.Println("rules", rules)
+	fmt.Println("pages", pages)
 
-	for i := 0; i < len(input); i++ {
-		for j := 0; j < len(input[i]); j++ {
-			if CheckCrossmas(CrossmasCheckerInput{table: input, x: j, y: i}) {
-				totals++
-			}
+	validPages := [][]int{}
+
+	for _, page := range pages {
+		if ValidateRules(page, rules) {
+			validPages = append(validPages, page)
 		}
 	}
 
-	fmt.Println("Total XMAS found", totals)
+	fmt.Println("valid pages", validPages)
+
+	sum := 0
+	for _, page := range validPages {
+		middle := len(page) / 2
+		sum += page[middle]
+		fmt.Println(page[middle])
+	}
+	fmt.Println("sum", sum)
 }
 
-func CheckCrossmas(input CrossmasCheckerInput) bool {
-	if input.table[input.y][input.x] != "A" {
-		return false
-	}
+func ValidateRules(p []int, rules []Rule) bool {
+	for _, rule := range rules {
+		ibefore := slices.Index(p, rule.Before) // prints 1
+		iafter := slices.Index(p, rule.After)   // prints 1
 
-	if input.x == 0 ||
-		input.x == len(input.table[0])-1 ||
-		input.y == 0 ||
-		input.y == len(input.table)-1 {
-		return false
-	}
-
-	mcound := 0
-	scound := 0
-
-	for i := -1; i <= 1; i++ {
-		for j := -1; j <= 1; j++ {
-			if i == 0 || j == 0 {
-				continue
-			}
-			if input.table[input.y+i][input.x+j] == "M" {
-				mcound++
-			}
-			if input.table[input.y+i][input.x+j] == "S" {
-				scound++
-			}
+		if ibefore == -1 || iafter == -1 {
+			continue
+		}
+		if ibefore > iafter {
+			return false
 		}
 	}
 
-	if !(mcound == 2 && scound == 2) {
-		return false
-	}
-
-	// Filter out wrong patterns
-	return input.table[input.y-1][input.x-1] != input.table[input.y+1][input.x+1]
+	return true
 }
 
-func CheckXMAS(input XMASCheckerInput) bool {
-	lenx := len(input.table[0])
-	leny := len(input.table)
-
-	// Lax position of word is out of bound on X axis
-	if (input.x+3*input.directionX) >= lenx || (input.x+3*input.directionX) < 0 {
-		return false
-	}
-
-	// Lay position of word is out of bound on Y ayis
-	if (input.y+3*input.directionY) >= leny || (input.y+3*input.directionY) < 0 {
-		return false
-	}
-
-	return input.table[input.y][input.x] == "X" &&
-		input.table[input.y+(input.directionY)][input.x+(input.directionX)] == "M" &&
-		input.table[input.y+2*(input.directionY)][input.x+2*(input.directionX)] == "A" &&
-		input.table[input.y+3*(input.directionY)][input.x+3*(input.directionX)] == "S"
-}
-
-func ReadInput(path string) [][]string {
+func ReadInput(path string) (p [][]int, r []Rule) {
 	file, err := os.Open(path)
 
 	if err != nil {
@@ -88,13 +63,41 @@ func ReadInput(path string) [][]string {
 	}
 	defer file.Close()
 
-	out := [][]string{}
-
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		runes := strings.Split(scanner.Text(), "")
-		out = append(out, runes)
+		line := scanner.Text()
+
+		if line == "" {
+			continue
+		}
+
+		if strings.Contains(line, "|") {
+			rule := ToRule(line)
+			r = append(r, rule)
+		} else {
+			pages := ToPages(line)
+			p = append(p, pages)
+		}
 	}
 
+	return p, r
+}
+
+func ToRule(input string) Rule {
+	parts := strings.Split(input, "|")
+
+	i, _ := strconv.Atoi(parts[0])
+	j, _ := strconv.Atoi(parts[1])
+
+	return Rule{Before: i, After: j}
+}
+
+func ToPages(input string) []int {
+	var out []int
+	parts := strings.Split(input, ",")
+	for _, v := range parts {
+		j, _ := strconv.Atoi(v)
+		out = append(out, j)
+	}
 	return out
 }
