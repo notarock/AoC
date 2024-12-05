@@ -7,20 +7,6 @@ import (
 	"strings"
 )
 
-type XMASCheckerInput struct {
-	table      [][]string
-	x          int
-	y          int
-	directionX int
-	directionY int
-}
-
-type CrossmasCheckerInput struct {
-	table [][]string
-	x     int
-	y     int
-}
-
 func main() {
 	input := ReadInput("input.txt")
 
