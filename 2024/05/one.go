@@ -1,103 +1,103 @@
-package main
+// package main
 
-import (
-	"bufio"
-	"fmt"
-	"os"
-	"slices"
-	"strconv"
-	"strings"
-)
+// import (
+// 	"bufio"
+// 	"fmt"
+// 	"os"
+// 	"slices"
+// 	"strconv"
+// 	"strings"
+// )
 
-type Rule struct {
-	Before int
-	After  int
-}
+// type Rule struct {
+// 	Before int
+// 	After  int
+// }
 
-func main() {
-	pages, rules := ReadInput("input.txt")
+// func main() {
+// 	pages, rules := ReadInput("input.txt")
 
-	fmt.Println("rules", rules)
-	fmt.Println("pages", pages)
+// 	fmt.Println("rules", rules)
+// 	fmt.Println("pages", pages)
 
-	validPages := [][]int{}
+// 	validPages := [][]int{}
 
-	for _, page := range pages {
-		if ValidateRules(page, rules) {
-			validPages = append(validPages, page)
-		}
-	}
+// 	for _, page := range pages {
+// 		if ValidateRules(page, rules) {
+// 			validPages = append(validPages, page)
+// 		}
+// 	}
 
-	fmt.Println("valid pages", validPages)
+// 	fmt.Println("valid pages", validPages)
 
-	sum := 0
-	for _, page := range validPages {
-		middle := len(page) / 2
-		sum += page[middle]
-		fmt.Println(page[middle])
-	}
-	fmt.Println("sum", sum)
-}
+// 	sum := 0
+// 	for _, page := range validPages {
+// 		middle := len(page) / 2
+// 		sum += page[middle]
+// 		fmt.Println(page[middle])
+// 	}
+// 	fmt.Println("sum", sum)
+// }
 
-func ValidateRules(p []int, rules []Rule) bool {
-	for _, rule := range rules {
-		ibefore := slices.Index(p, rule.Before) // prints 1
-		iafter := slices.Index(p, rule.After)   // prints 1
+// func ValidateRules(p []int, rules []Rule) bool {
+// 	for _, rule := range rules {
+// 		ibefore := slices.Index(p, rule.Before) // prints 1
+// 		iafter := slices.Index(p, rule.After)   // prints 1
 
-		if ibefore == -1 || iafter == -1 {
-			continue
-		}
-		if ibefore > iafter {
-			return false
-		}
-	}
+// 		if ibefore == -1 || iafter == -1 {
+// 			continue
+// 		}
+// 		if ibefore > iafter {
+// 			return false
+// 		}
+// 	}
 
-	return true
-}
+// 	return true
+// }
 
-func ReadInput(path string) (p [][]int, r []Rule) {
-	file, err := os.Open(path)
+// func ReadInput(path string) (p [][]int, r []Rule) {
+// 	file, err := os.Open(path)
 
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer file.Close()
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
+// 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
+// 	scanner := bufio.NewScanner(file)
+// 	for scanner.Scan() {
+// 		line := scanner.Text()
 
-		if line == "" {
-			continue
-		}
+// 		if line == "" {
+// 			continue
+// 		}
 
-		if strings.Contains(line, "|") {
-			rule := ToRule(line)
-			r = append(r, rule)
-		} else {
-			pages := ToPages(line)
-			p = append(p, pages)
-		}
-	}
+// 		if strings.Contains(line, "|") {
+// 			rule := ToRule(line)
+// 			r = append(r, rule)
+// 		} else {
+// 			pages := ToPages(line)
+// 			p = append(p, pages)
+// 		}
+// 	}
 
-	return p, r
-}
+// 	return p, r
+// }
 
-func ToRule(input string) Rule {
-	parts := strings.Split(input, "|")
+// func ToRule(input string) Rule {
+// 	parts := strings.Split(input, "|")
 
-	i, _ := strconv.Atoi(parts[0])
-	j, _ := strconv.Atoi(parts[1])
+// 	i, _ := strconv.Atoi(parts[0])
+// 	j, _ := strconv.Atoi(parts[1])
 
-	return Rule{Before: i, After: j}
-}
+// 	return Rule{Before: i, After: j}
+// }
 
-func ToPages(input string) []int {
-	var out []int
-	parts := strings.Split(input, ",")
-	for _, v := range parts {
-		j, _ := strconv.Atoi(v)
-		out = append(out, j)
-	}
-	return out
-}
+// func ToPages(input string) []int {
+// 	var out []int
+// 	parts := strings.Split(input, ",")
+// 	for _, v := range parts {
+// 		j, _ := strconv.Atoi(v)
+// 		out = append(out, j)
+// 	}
+// 	return out
+// }
